@@ -569,6 +569,12 @@ class tools():
             new_img = cv2.line(new_img, (point_wh[0] - cross_length, point_wh[1] + cross_length), (point_wh[0] + cross_length, point_wh[1] - cross_length), (250, 250, 250), thick // 2)
             return new_img
 
+        def show_img_dict(self, **kwargs):
+            for i in kwargs.keys():
+                img = self.put_text(kwargs[i], text=i)
+                cv2.imshow(i, img)
+            cv2.waitKey()
+
         def demo(self):
             im = np.ones((500, 500, 3), dtype='uint8') * 50
             imshow = self.put_text(im, text=list('demo show sample text'.split(' ')), scale=1)

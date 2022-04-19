@@ -16,10 +16,68 @@ from datasets.flyingchairs import flyingchairs
 from datasets.sintel import Sintel
 from datasets.kitti import KITTI
 
+
+# add a dataset for debug and show the training samples
+class debug_data(tools.abs_database):
+    def __init__(self, **kwargs):
+        super(debug_data, self).__init__()
+        self.only_image = True
+        # given a dir that contains a video sequence
+        self.root = r'C:\Users\28748\Documents\x2go_share\sintel\nips19_qvi_eval_release\nips19_qvi_eval_release\datasets\example\car-turn'
+        images = sorted(glob(os.path.join(self.root, '*.jpg')))
+        for i in range(len(images) - 1):
+            sample = {'img1_path': images[i], 'img2_path': images[i + 1]}
+            self.data_ls['train'].append(sample)
+        self._init_len()
+
+    # return {'im1': img1, 'im2': img2, 'flow': None, 'valid': None, 'name': name}
+    def sample(self, index, split):
+        sample = self.data_ls[split][index % self.len[split]]
+
+        img1 = frame_utils.read_gen(sample['img1_path'])
+        img2 = frame_utils.read_gen(sample['img2_path'])
+        img1 = np.array(img1).astype(np.uint8)
+        img2 = np.array(img2).astype(np.uint8)
+        # grayscale images
+        if len(img1.shape) == 2:
+            img1 = np.tile(img1[..., None], (1, 1, 3))
+            img2 = np.tile(img2[..., None], (1, 1, 3))
+        else:
+            img1 = img1[..., :3]
+            img2 = img2[..., :3]
+        res = {'im1': img1, 'im2': img2, 'name': os.path.split(sample['img1_path'])[1]}
+        if self.only_image:
+            return res
+        flow = None
+        valid = None
+        res.update({'flow': flow, 'valid': valid})
+        return res
+
+    @classmethod
+    def demo(cls):
+        data = debug_data()
+        print('train:', data.len['train'], ',val:', data.len['val'])
+        split = 'train'
+        for ind in range(data.len[split]):
+            sample = data.sample(index=ind, split=split)
+            im1, im2 = sample['im1'], sample['im2']
+            # tensor_tools.cv2_show_dict(im1=im1, im2=im2, flow_im=flow_im)
+            print(sample['name'])
+            tensor_tools.check_tensor_np(im1, name='im1')
+            tensor_tools.check_tensor_np(im2, name='im2')
+            tools.Text_img().show_img_dict(im1=im1, im2=im2)
+            # if ind > 2:
+            #     # cv2.imwrite('./im1.png', im1)
+            #     # cv2.imwrite('./im2.png', im2)
+            #     # cv2.imwrite('./flow.png', tensor_tools.flow_to_image(flow))
+            #     break
+
+
 database_dict = {
-    'flyingchairs': {'base': flyingchairs,  'sparse': False, 'img_size': (384, 512)},  # crop (320, 320)
-    'sintel': {'base': Sintel,  'sparse': False, 'img_size': (436, 1024)},  # crop (320, 768)
+    'flyingchairs': {'base': flyingchairs, 'sparse': False, 'img_size': (384, 512)},  # crop (320, 320)
+    'sintel': {'base': Sintel, 'sparse': False, 'img_size': (436, 1024)},  # crop (320, 768)
     'KITTI': {'base': KITTI, 'sparse': True, 'img_size': (370, 1226)},  # crop (256, 832)
+    'debug': {'base': debug_data, 'sparse': True, 'img_size': (480, 854)},  # crop (256, 832)
 }
 
 
@@ -240,6 +298,7 @@ class UnFlowDataset(Dataset):
                 b = np.transpose(b, (1, 2, 0))
                 b = tensor_tools.im_norm(b)
                 b = b.astype(np.uint8)
+                b = np.flip(b, 2)  # change color channel to show
                 return b
 
             return [temp(i) for i in args]
@@ -296,18 +355,33 @@ class UnFlowDataset(Dataset):
                 if i > 5:
                     break
 
-        d_name = 'KITTI'
-        d_pass = '2012mv'
-        conf_dict = {'data_name': d_name, 'data_pass': d_pass,
+        def show_data_sample(dataset, data_name):
+            print('===')
+            print(len(dataset))
+            print('===')
+            for i in range(len(dataset)):
+                sample = dataset[i]  # = data.__getitem__(i)
+                im1, im2, im1_crop, im2_crop, im1_crop_aug, im2_crop_aug = process(*fetch_data(sample, 'im1', 'im2', 'im1_crop', 'im2_crop', 'im1_crop_aug', 'im2_crop_aug'))
+                name = sample['name']
+                crop_start = sample['crop_start']
+                print(data_name + ': ', name)
+                tools.Text_img().show_img_dict(im1=im1, im2=im2, im1_crop=im1_crop, im2_crop=im2_crop, im1_crop_aug=im1_crop_aug, im2_crop_aug=im2_crop_aug)
+
+        d_name = 'debug'
+        conf_dict = {'data_name': d_name, 'datatype': 'base',
                      # aug param
                      'aug_sintel_final_prob': 0,
-                     'aug_crop_size': (256, 832),  # chairs:(320, 480), sintel:(320, 768), KITTI: (256, 832)
+                     'aug_crop_size': (320, 480),  # chairs:(320, 480), sintel:(320, 768), KITTI: (256, 832), debug:(480,854)
                      'aug_color_prob': 0.9,
-                     'aug_color_asymmetric_prob': 0.2,
-                     'aug_eraser_prob': 0.5
+                     'aug_color_asymmetric_prob': 0.9,
+                     'aug_eraser_prob': 0.9
                      }
         d_conf = UnFlowDataset.Config(**conf_dict)
         data = d_conf() * 10
         # check_data_sample(dataset=data, data_name=d_name + '_' + d_pass)
-        check_data_sample(dataset=data, data_name=d_name + '_' + d_pass)
+        # check_data_sample(dataset=data, data_name=d_name)
+        show_data_sample(dataset=data, data_name=d_name)
 
+
+if __name__ == '__main__':
+    UnFlowDataset.demo()
