@@ -104,6 +104,7 @@ class UnFlowDataset(Dataset):
             self.aug_crop_size = (320, 480)  # h,w
             self.aug_crop_rho = 8
             self.aug_horizontal_prob = 0.5
+            self.aug_vertical_prob = 0.1
             # photo metric and occlusion aug
             self.aug_color_prob = 0.9
             self.aug_color_asymmetric_prob = 0.2
@@ -134,14 +135,20 @@ class UnFlowDataset(Dataset):
         self.len_rmul = 1
 
     def _random_flip(self, *args):
-        def temp(a):
-            b = np.flip(a, 2)
+        # given h,w,c image
+        def temp_w(a):
+            b = np.flip(a, 1)
             return b
 
+        def temp_h(a):
+            b = np.flip(a, 0)
+            return b
+
+        res = args
         if np.random.rand() < self.conf.aug_horizontal_prob:
-            res = [temp(i) for i in args]
-        else:
-            res = args
+            res = [temp_w(i) for i in res]
+        if np.random.rand() < self.conf.aug_vertical_prob:
+            res = [temp_h(i) for i in res]
         return res
 
     def _random_crop(self, *args):

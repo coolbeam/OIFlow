@@ -137,6 +137,7 @@ class Unsup_Loss(tools.abstract_config):
             outgoing_mask[occ_mask == 1] = 1  # not occluded regions =1
             outgoing_mask[out_occ == 0] = 1  # 'out' regions=1, the rest regions=0(object moving inside the image plane)
             return outgoing_mask
+
     # Equivariant loss: here I call the self-supervision proposed in ARFlow as Equivariant loss
     class Eq_Loss_model(tools.abstract_config):
         def __init__(self, **kwargs):
@@ -560,11 +561,12 @@ class train_irrpwc(tools.abstract_config):
         self.eval_some_save_results = False
 
         # === dataset aug augmentation params
-        self.aug_sintel_final_prob = 0 # using final image as the photometric augmentation version of clean image
+        self.aug_sintel_final_prob = 0  # using final image as the photometric augmentation version of clean image
         self.aug_switch_prob = 0.5
         self.aug_crop_size = (320, 320)  # 1024x436 image
         self.aug_crop_rho = 8
         self.aug_horizontal_prob = 0.5
+        self.aug_vertical_prob = 0.1
         # photo metric and occlusion aug
         self.aug_color_prob = 0  # do not use aug
         self.aug_color_asymmetric_prob = 0
@@ -1019,7 +1021,7 @@ class train_irrpwc(tools.abstract_config):
         print('score=%.2f' % current_val, results)
 
     @classmethod
-    def demo(cls,):
+    def demo(cls, ):
         p = {
             'train_dir': '/data/Optical_Flow_all/train_unsuper_optical_flow/chairs_OIFlow_irrpwc',
             'if_show_training': False,
