@@ -150,7 +150,7 @@ def flying_chairs_experiment():
             'equivariant_zoom': (1.0, 1.5, 0.985, 1.015),  # (1.0, 1.4, 0.99, 1.01)
         }
     # the second stage: bidirection flow and add occlusion checking(forward-backward check, range map check is not implemented) todo now training
-    # here the photometric augmentation should be closed. I guess the reason is that image pair after augmentation is too difficult and the occ mask may disable too much areas.
+    # here the photometric augmentation should be closed. I guess the reason is that the image pair after augmentation is too difficult and the occ mask may disable too much areas.
     elif stage == 2:
         param = {
             'if_show_training': False,
@@ -181,7 +181,7 @@ def flying_chairs_experiment():
             'norm_photo_loss_scale': 0.5,  # the original image scale is 0~255
             'photo_loss_type': 'abs_robust',  # abs_robust, charbonnier,L1,SSIM(can not use, only for occlusion checking is enabled)
             'smooth_loss_type': 'delta',  # 'edge' or 'delta'
-            'smooth_loss_weight_1': 0.1,
+            'smooth_loss_weight_1': 0.01,
             'smooth_loss_weight_2': 0,
             'occ_alpha_1': 0.05,
             'occ_alpha_2': 0.5,
