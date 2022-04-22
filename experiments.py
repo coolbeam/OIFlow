@@ -19,6 +19,9 @@ class pretrain_models():
             self.ph_sm_bdw_1 = pretrain_models.abs_mp(path='./pretrain_models/chairs/irrpwc_ph_sm_bdw_EPE=3.23.pth',
                                                       info='flyingchairs(EPE=3.23 )',
                                                       note='single forward flow, only photo loss and smooth loss, augmentation is used, lr=1e-5')
+            self.ph_sm_bdw_occ = pretrain_models.abs_mp(path='./pretrain_models/chairs/irrpwc_ph_sm_bdw_occ_EPE=3.07.pth',
+                                                      info='flyingchairs(EPE=3.07 )',
+                                                      note='single forward flow, only photo loss and smooth loss, augmentation is closed, lr=1e-5')
 
 
 # /usr/bin/python3 experiments.py
@@ -149,7 +152,7 @@ def flying_chairs_experiment():
             'equivariant_vflip': False,
             'equivariant_zoom': (1.0, 1.5, 0.985, 1.015),  # (1.0, 1.4, 0.99, 1.01)
         }
-    # the second stage: bidirection flow and add occlusion checking(forward-backward check, range map check is not implemented) todo now training
+    # the second stage: bidirection flow and add occlusion checking(forward-backward check, range map check is not implemented) EPE=3.07
     # here the photometric augmentation should be closed. I guess the reason is that the image pair after augmentation is too difficult and the occ mask may disable too much areas.
     elif stage == 2:
         param = {
@@ -213,7 +216,7 @@ def flying_chairs_experiment():
             'equivariant_vflip': False,
             'equivariant_zoom': (1.0, 1.5, 0.985, 1.015),  # (1.0, 1.4, 0.99, 1.01)
         }
-    # the third stage: add self-supervision(I call Equivariant loss or eq loss here) todo
+    # the third stage: add self-supervision(I call Equivariant loss or eq loss here) todo now traning
     elif stage == 3:
         raise ValueError('not implemented')
     # the forth stage: add occlusion inpaining todo not implemented here, please wait for some time.
