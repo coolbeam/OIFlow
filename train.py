@@ -938,7 +938,8 @@ class train_irrpwc(tools.abstract_config):
                 loss += smooth_loss
 
             eq_im1, eq_im2, eq_flow_gt, eq_mask = eq_loss_model.create_sample(im1=data_blob['im1_crop_aug'], im2=data_blob['im2_crop_aug'], flow_f=flow_f, occ_f=occ_f)
-            flow_predictions_f_eq = model(eq_im1, eq_im2, indict)
+            out_dict_eq = model(eq_im1, eq_im2, indict)
+            flow_predictions_f_eq = out_dict_eq['flow_f']
             eq_loss = eq_loss_model.equivariant_loss(label=eq_flow_gt, mask=eq_mask, flow_pred=flow_predictions_f_eq)
             loss += self.eq_loss_weight * eq_loss
             loss = loss.mean()
