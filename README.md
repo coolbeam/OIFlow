@@ -1,8 +1,12 @@
-# OIFlow: occlusion-inpainting optical flow estimation by unsupervised learning
+# [TIP2021] OIFlow: Occlusion-Inpainting Optical Flow Estimation by Unsupervised Learning
 
-By [Shuaicheng Liu](http://www.liushuaicheng.org/), Kunming Luo, Nianjin Ye, [Chuan Wang](http://wangchuan.github.io/index.html), [Jue Wang](http://www.juew.org/), Bing Zeng
+<h3 align="center"> Shuaicheng Liu$^1$, Kunming Luo$^2$, Nianjin Ye$^2$, Chuan Wang$^2$, Jue Wang$^2$, Bing Zeng$^1$</h3>
+<h3 align="center"> 1. University of Electronic Science and Technology of China</h3>
+<h3 align="center"> 2. Megvii Research </h3>
 
-Megvii Technology, University of Electronic Science and Technology of China
+This is the official implementation of paper [***OIFlow: Occlusion-Inpainting Optical Flow Estimation by Unsupervised Learning***](), IEEE Transactions on Image Processing, 2021
+
+
 
     @article{liu2021oiflow,
       title={OIFlow: occlusion-inpainting optical flow estimation by unsupervised learning},
