@@ -1,6 +1,6 @@
 # [TIP2021] OIFlow: Occlusion-Inpainting Optical Flow Estimation by Unsupervised Learning
 
-<h4 align="center"> Shuaicheng Liu$^1$, Kunming Luo$^2$, Nianjin Ye$^2$, Chuan Wang$^2$, Jue Wang$^2$, Bing Zeng$^1$</h4>
+<h4 align="center"> Shuaicheng Liu<sup>1</sup>, Kunming Luo<sup>2</sup>, Nianjin Ye<sup>2</sup>, Chuan Wang<sup>2</sup>, Jue Wang<sup>2</sup>, Bing Zeng<sup>1</sup></h4>
 <h4 align="center"> 1. University of Electronic Science and Technology of China</h4>
 <h4 align="center"> 2. Megvii Research </h4>
 
